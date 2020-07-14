@@ -14,11 +14,7 @@
               <v-container>
                 <v-row>
                   <v-col>
-                    <v-text-field
-                      v-model="message"
-                      label="Message"
-                      @keydown.enter="add"
-                    />
+                    <v-text-field v-model="message" label="Message" @keydown.enter="add" />
                   </v-col>
                   <v-col cols="auto">
                     <v-btn @click="add">Send</v-btn>
@@ -27,11 +23,9 @@
                 <v-row>
                   <v-col>
                     <v-list>
-                      <v-list-item
-                        v-for="(item, idx) in historyList.slice().reverse()"
-                        :key="idx"
-                      >
-                        {{ item }}
+                      <v-list-item v-for="(item, idx) in historyList.slice().reverse()" :key="idx">
+                        <v-list-item-title>{{ item.sender }}</v-list-item-title>
+                        <v-list-item-subtitle>{{ item.message }}</v-list-item-subtitle>
                       </v-list-item>
                     </v-list>
                   </v-col>
@@ -67,12 +61,14 @@ export default class App extends Vue {
   }
 
   @Obey("shout")
-  public onShout(payload: { sender: string; message: string }) {
+  public onShout(payload: { sender: string; message: string }, someShit: string) {
+    console.log("this:", this, "Some shit:", someShit);
     this.historyList.push(payload);
   }
 
   public created() {
     this.$initChannel("room:lobby");
+    this.onShout({ sender: "root", message: "some" }, "shit");
   }
 }
 </script>

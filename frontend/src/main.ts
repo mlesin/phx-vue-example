@@ -4,7 +4,7 @@ import store from "./store";
 import vuetify from "./plugins/vuetify";
 
 import VuePhx from "./plugins/vue-phx";
-Vue.use(new VuePhx("ws://localhost:4000/socket", { token: "" }));
+Vue.use(new VuePhx("ws://localhost:4000/socket", { params: { token: "" } }));
 
 Vue.config.productionTip = false;
 

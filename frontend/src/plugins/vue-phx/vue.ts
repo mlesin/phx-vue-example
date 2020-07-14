@@ -4,6 +4,7 @@ export default Vue;
 
 import { Socket, Channel } from "phoenix";
 import ChannelKeeper from "./channelKeeper";
+import { ObeyOption, ObeyChannels } from "./obey";
 declare module "vue/types/vue" {
   interface Vue {
     $channelKeeper: ChannelKeeper;
@@ -13,10 +14,7 @@ declare module "vue/types/vue" {
     /**
      * Init the channel and listen the event listed on options[phoenix]
      */
-    $initChannel: (
-      channelName: string,
-      params?: Record<string, unknown>
-    ) => void;
+    $initChannel: (channelName: string, params?: Record<string, unknown>) => void;
   }
 }
 declare module "vue/types/options" {
@@ -28,13 +26,6 @@ declare module "vue/types/options" {
     PropsDef = PropsDefinition<DefaultProps>,
     Props = DefaultProps
   > {
-    phoenix?:
-      | {
-          [channelName: string]: ObeyOption;
-        }
-      | ObeyOption;
+    phoenix?: ObeyChannels | ObeyOption;
   }
-}
-interface ObeyOption {
-  [eventName: string]: string;
 }

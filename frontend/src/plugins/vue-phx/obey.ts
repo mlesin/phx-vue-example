@@ -1,44 +1,37 @@
 import Vue from "vue";
 import { createDecorator } from "vue-class-component";
 
+export interface ObeyOption {
+  [eventName: string]: string;
+}
+
+export interface ObeyChannels {
+  [channelName: string]: ObeyOption;
+}
+
 export function Obey(
   eventName: string,
   channelName?: string
-): (target: Vue, key: string, _descriptor: unknown) => void {
-  return (target: Vue, methodName: string, _descriptor: unknown) => {
-    console.log(
-      eventName,
-      channelName,
-      ":",
-      target,
-      ":",
-      methodName,
-      ":",
-      _descriptor
-    );
-    createDecorator((componentOptions, _k) => {
-      componentOptions.phoenix = !componentOptions.phoenix
-        ? Object.create(null)
-        : componentOptions.phoenix;
+): (targetPrototype: Vue, memberName: string, _propDescriptor: PropertyDescriptor) => void {
+  return (targetPrototype: Vue, memberName: string, _propertyDescriptor: PropertyDescriptor) => {
+    console.log("create decorator:", targetPrototype, _propertyDescriptor);
+    const decorator = createDecorator((componentOptions, _k) => {
+      componentOptions.phoenix = !componentOptions.phoenix ? Object.create(null) : componentOptions.phoenix;
       if (componentOptions.phoenix) {
         if (channelName) {
-          componentOptions.phoenix[channelName] = componentOptions.phoenix[
-            channelName
-          ]
+          componentOptions.phoenix[channelName] = componentOptions.phoenix[channelName]
             ? {
-                ...(componentOptions.phoenix[channelName] as Record<
-                  string,
-                  string
-                >),
-                [eventName]: methodName
+                ...(componentOptions.phoenix as ObeyChannels)[channelName],
+                [eventName]: memberName
               }
             : {
-                [eventName]: methodName
+                [eventName]: memberName
               };
         } else {
-          componentOptions.phoenix[eventName] = methodName;
+          (componentOptions.phoenix as ObeyOption)[eventName] = memberName;
         }
       }
-    })(target, methodName);
+    });
+    decorator(targetPrototype, memberName);
   };
 }
