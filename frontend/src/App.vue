@@ -2,56 +2,63 @@
   <v-app>
     <v-app-bar app color="primary" dark>
       <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
-
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
+        <h2>Phx-Vue-Example</h2>
       </div>
-
-      <v-spacer></v-spacer>
-
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
     </v-app-bar>
 
-    <v-content>
-      <HelloWorld />
-    </v-content>
+    <v-main>
+      <v-container fluid>
+        <v-row align="center" justify="center">
+          <v-col md="6">
+            <v-card>
+              <v-container>
+                <v-row>
+                  <v-col>
+                    <v-text-field
+                      v-model="message"
+                      label="Message"
+                      @keydown.enter="add"
+                    />
+                  </v-col>
+                  <v-col cols="auto">
+                    <v-btn @click="add">Send</v-btn>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col>
+                    <v-list>
+                      <v-list-item
+                        v-for="(item, idx) in items.slice().reverse()"
+                        :key="idx"
+                      >
+                        {{ item }}
+                      </v-list-item>
+                    </v-list>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-main>
   </v-app>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import HelloWorld from "./components/HelloWorld.vue";
+import { Component } from "vue-property-decorator";
 
-export default Vue.extend({
-  name: "App",
+@Component({})
+export default class App extends Vue {
+  items: string[] = [];
+  message = "";
 
-  components: {
-    HelloWorld
-  },
-
-  data: () => ({
-    //
-  })
-});
+  add() {
+    if (this.message.length > 0) {
+      this.items.push(this.message);
+      this.message = "";
+    }
+  }
+}
 </script>
