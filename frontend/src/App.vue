@@ -28,7 +28,7 @@
                   <v-col>
                     <v-list>
                       <v-list-item
-                        v-for="(item, idx) in items.slice().reverse()"
+                        v-for="(item, idx) in historyList.slice().reverse()"
                         :key="idx"
                       >
                         {{ item }}
@@ -48,17 +48,31 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
+import { Obey } from "./plugins/vue-phx";
 
 @Component({})
 export default class App extends Vue {
-  items: string[] = [];
+  historyList: { sender: string; message: string }[] = [];
   message = "";
+  sender = "";
 
-  add() {
+  public add() {
     if (this.message.length > 0) {
-      this.items.push(this.message);
+      this.$channel.push("shout", {
+        message: this.message,
+        sender: this.sender
+      });
       this.message = "";
     }
+  }
+
+  @Obey("shout")
+  public onShout(payload: { sender: string; message: string }) {
+    this.historyList.push(payload);
+  }
+
+  public created() {
+    this.$initChannel("room:lobby");
   }
 }
 </script>
