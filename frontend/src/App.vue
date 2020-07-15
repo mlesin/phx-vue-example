@@ -10,28 +10,10 @@
       <v-container fluid>
         <v-row align="center" justify="center">
           <v-col md="6">
-            <v-card>
-              <v-container>
-                <v-row>
-                  <v-col>
-                    <v-text-field v-model="message" label="Message" @keydown.enter="add" />
-                  </v-col>
-                  <v-col cols="auto">
-                    <v-btn @click="add">Send</v-btn>
-                  </v-col>
-                </v-row>
-                <v-row>
-                  <v-col>
-                    <v-list>
-                      <v-list-item v-for="(item, idx) in historyList.slice().reverse()" :key="idx">
-                        <v-list-item-title>{{ item.sender }}</v-list-item-title>
-                        <v-list-item-subtitle>{{ item.message }}</v-list-item-subtitle>
-                      </v-list-item>
-                    </v-list>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-card>
+            <communicator sender="Left"></communicator>
+          </v-col>
+          <v-col md="6">
+            <communicator sender="Right"></communicator>
           </v-col>
         </v-row>
       </v-container>
@@ -42,33 +24,12 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
-import { Obey } from "./plugins/vue-phx";
+import Communicator from "./components/Communicator.vue";
 
-@Component({})
-export default class App extends Vue {
-  historyList: { sender: string; message: string }[] = [];
-  message = "";
-  sender = "";
-
-  public add() {
-    if (this.message.length > 0) {
-      this.$channel.push("shout", {
-        message: this.message,
-        sender: this.sender
-      });
-      this.message = "";
-    }
+@Component({
+  components: {
+    Communicator
   }
-
-  @Obey("shout")
-  public onShout(payload: { sender: string; message: string }, someShit: string) {
-    console.log("this:", this, "Some shit:", someShit);
-    this.historyList.push(payload);
-  }
-
-  public created() {
-    this.$initChannel("room:lobby");
-    this.onShout({ sender: "root", message: "some" }, "shit");
-  }
-}
+})
+export default class App extends Vue {}
 </script>

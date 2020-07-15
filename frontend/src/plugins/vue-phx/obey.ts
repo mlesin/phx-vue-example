@@ -2,7 +2,7 @@ import Vue from "vue";
 import { createDecorator } from "vue-class-component";
 
 export interface ObeyOption {
-  [eventName: string]: string;
+  [eventName: string]: (response?: Record<string, string>) => void;
 }
 
 export interface ObeyChannels {
@@ -12,9 +12,9 @@ export interface ObeyChannels {
 export function Obey(
   eventName: string,
   channelName?: string
-): (targetPrototype: Vue, memberName: string, _propDescriptor: PropertyDescriptor) => void {
-  return (targetPrototype: Vue, memberName: string, _propertyDescriptor: PropertyDescriptor) => {
-    console.log("create decorator:", targetPrototype, _propertyDescriptor);
+): (targetPrototype: Vue, memberName: string, propertyDescriptor: PropertyDescriptor) => void {
+  return (targetPrototype: Vue, memberName: string, propertyDescriptor: PropertyDescriptor) => {
+    console.log("create decorator:", targetPrototype, propertyDescriptor);
     const decorator = createDecorator((componentOptions, _k) => {
       componentOptions.phoenix = !componentOptions.phoenix ? Object.create(null) : componentOptions.phoenix;
       if (componentOptions.phoenix) {
@@ -22,13 +22,13 @@ export function Obey(
           componentOptions.phoenix[channelName] = componentOptions.phoenix[channelName]
             ? {
                 ...(componentOptions.phoenix as ObeyChannels)[channelName],
-                [eventName]: memberName
+                [eventName]: propertyDescriptor.value
               }
             : {
-                [eventName]: memberName
+                [eventName]: propertyDescriptor.value
               };
         } else {
-          (componentOptions.phoenix as ObeyOption)[eventName] = memberName;
+          (componentOptions.phoenix as ObeyOption)[eventName] = propertyDescriptor.value;
         }
       }
     });

@@ -5,9 +5,9 @@ defmodule EventWeb.RoomChannel do
     {:ok, socket}
   end
 
-  def handle_in("shout", payload, socket) do
+  def handle_in("shout", %{"message" => message} = payload, socket) do
     broadcast(socket, "shout", payload)
+    broadcast(socket, "other", %{sender: "server", message: message})
     {:noreply, socket}
   end
-
 end

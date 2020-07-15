@@ -13,6 +13,7 @@ export default class VuePhx implements PluginObject<unknown> {
   public install(localVue: VueConstructor<Vue>): void {
     Vue.prototype.$socket = this.socket;
     Vue.prototype.$channelKeeper = new ChannelKeeper(this.socket);
+    Vue.prototype.$waitingEventList = {};
     localVue.mixin(VuePhxMixin);
     this.socket.connect();
   }

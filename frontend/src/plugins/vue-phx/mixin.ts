@@ -1,4 +1,5 @@
 import Vue from "vue";
+import { ObeyChannels } from "./obey";
 
 export default Vue.extend({
   created() {
@@ -6,19 +7,24 @@ export default Vue.extend({
     if (!this.$options.phoenix) {
       return;
     }
-    this.$waitingEventList = {};
     for (const key of Object.keys(this.$options.phoenix)) {
       const phoenixOption = this.$options.phoenix[key];
-      if (typeof phoenixOption === "string") {
-        console.log(this.$options.phoenix, this);
-        // this.$channel ? this.$channel.on(key, this[phoenixOption]) : (this.$waitingEventList[key] = phoenixOption);
+      if (typeof phoenixOption === "function") {
+        console.log("mixin create:", key, phoenixOption);
+        if (this.$channel) {
+          console.log("mixin create $channel exists:", key, phoenixOption);
+          this.$channel.on(key, (response?: Record<string, string>) => phoenixOption.apply(this, [response]));
+        } else {
+          console.log("mixin create put into $waitingEventList:", key, phoenixOption);
+          this.$waitingEventList[key] = phoenixOption;
+        }
       } else {
-        console.log(this.$options.phoenix);
+        console.log("mixin create 2:", this.$options.phoenix);
         const channel = this.$channelKeeper.retrieveChannel(key);
         for (const eventName of Object.keys(this.$options.phoenix[key])) {
           console.log(this.$options.phoenix);
-          // const methodName = this.$options.phoenix[key][eventName];
-          // channel.on(eventName, this[methodName]);
+          const method = (this.$options.phoenix as ObeyChannels)[key][eventName];
+          channel.on(eventName, (response?: Record<string, string>) => method.apply(this, [response]));
         }
       }
     }
@@ -45,10 +51,11 @@ export default Vue.extend({
   methods: {
     $initChannel(channelName: string, params?: Record<string, unknown>) {
       if (this.$waitingEventList) {
+        console.log("$initChannel:", channelName, "params:", params, "$waitingEventList:", this.$waitingEventList);
         this.$channel = this.$channelKeeper.retrieveChannel(channelName, params);
         for (const key of Object.keys(this.$waitingEventList)) {
-          const methodName = this.$waitingEventList[key];
-          // this.$channel.on(key, this[methodName]);
+          const method = this.$waitingEventList[key];
+          this.$channel.on(key, (response?: Record<string, string>) => method.apply(this, [response]));
         }
       }
     }

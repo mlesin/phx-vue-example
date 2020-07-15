@@ -10,7 +10,7 @@ declare module "vue/types/vue" {
     $channelKeeper: ChannelKeeper;
     $channel: Channel;
     $socket: Socket;
-    $waitingEventList: Record<string, string>;
+    $waitingEventList: Record<string, (response?: Record<string, string>) => void>;
     /**
      * Init the channel and listen the event listed on options[phoenix]
      */
