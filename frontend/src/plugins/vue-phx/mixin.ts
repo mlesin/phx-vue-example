@@ -3,14 +3,13 @@ import { Channel } from "phoenix";
 
 export default Vue.extend({
   created() {
-    this.$socket.connect();
     const channels = this.$options.channels;
     this.$options.channels = new Proxy(
       {},
       {
         set: (target: Record<string, Channel>, key: string, value) => {
-          const chan = this.$socket.channel(key, {});
-          const _chan = chan.join();
+          const chan = this.$channelKeeper.retrieveChannel(key, {});
+          // const _chan = chan.join();
 
           if (value.onError) {
             chan.onError = value.onError;
@@ -20,9 +19,9 @@ export default Vue.extend({
             chan.onClose = value.onClose;
           }
 
-          if (value.onJoin) {
-            _chan.receive("ok", value.onJoin);
-          }
+          // if (value.onJoin) {
+          //   chan.receive("ok", value.onJoin);
+          // }
 
           if (value.onMessage) {
             chan.onMessage = function(event, payload, res) {

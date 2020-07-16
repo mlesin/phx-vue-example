@@ -3,9 +3,11 @@ export * from "vue";
 export default Vue;
 
 import { Socket, Channel } from "phoenix";
+import ChannelKeeper from "./channelKeeper";
 declare module "vue/types/vue" {
   interface Vue {
     $socket: Socket;
+    $channelKeeper: ChannelKeeper;
   }
 }
 

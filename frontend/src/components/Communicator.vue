@@ -41,14 +41,8 @@ export default Vue.extend({
       message: ""
     };
   },
-  created() {
-    // this.$initChannel("room:lobby");
-  },
   channels: {
-    "some_channel:topic": {
-      // onJoin() {
-      //   console.log("Joined Admin channel");
-      // },
+    "room:lobby": {
       onError(err) {
         console.log("Error", err);
       },
@@ -62,7 +56,8 @@ export default Vue.extend({
     add() {
       if (this.message.length > 0) {
         store.dispatch.module1.loadName({ id: this.message });
-        this.$options.channels?.["some_channel:topic"].push?.("shout", {
+        console.log("sesending msg:", this.$options.channels, this.$options.channels?.["room:lobby"]);
+        this.$options.channels?.["room:lobby"].push?.("shout", {
           message: this.message,
           sender: this.sender
         });
