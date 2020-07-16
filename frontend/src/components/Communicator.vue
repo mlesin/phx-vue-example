@@ -25,43 +25,56 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
-import { Obey } from "../plugins/vue-phx";
+// import { Obey } from "../plugins/vue-phx";
 import store from "../store";
 
-@Component({})
-export default class Communicator extends Vue {
-  historyList: { sender: string; message: string }[] = [];
-  message = "";
-
-  @Prop({ default: "" })
-  sender!: string;
-
-  public add() {
-    if (this.message.length > 0) {
-      store.dispatch.module1.loadName({ id: this.message });
-      this.$channel.push("shout", {
-        message: this.message,
-        sender: this.sender
-      });
-      this.message = "";
+export default Vue.extend({
+  props: {
+    sender: {
+      type: String,
+      default: ""
+    }
+  },
+  data() {
+    return {
+      historyList: [] as { sender: string; message: string }[],
+      message: ""
+    };
+  },
+  created() {
+    // this.$initChannel("room:lobby");
+  },
+  channels: {
+    "some_channel:topic": {
+      // onJoin() {
+      //   console.log("Joined Admin channel");
+      // },
+      onError(err) {
+        console.log("Error", err);
+      },
+      onMessage(event: string, payload: { sender: string; message: string }) {
+        console.log("Got message: ", event, "payload:", payload, "this:", this);
+        //this.historyList.push({ sender: payload.sender, message: "other:" + payload.message });
+      }
+    }
+  },
+  methods: {
+    add() {
+      if (this.message.length > 0) {
+        store.dispatch.module1.loadName({ id: this.message });
+        this.$options.channels?.["some_channel:topic"].push?.("shout", {
+          message: this.message,
+          sender: this.sender
+        });
+        this.message = "";
+      }
+    },
+    //@Obey("other", "some_channel:topic")
+    // @Obey("shout")
+    onShout(payload: { sender: string; message: string }) {
+      console.log("this:", this, "payload:", payload);
+      this.historyList.push(payload);
     }
   }
-
-  @Obey("other", "some_channel:topic")
-  public onOther(payload: { sender: string; message: string }) {
-    console.log("this:", this, "payload:", payload);
-    this.historyList.push({ sender: payload.sender, message: "other:" + payload.message });
-  }
-
-  @Obey("shout")
-  public onShout(payload: { sender: string; message: string }) {
-    console.log("this:", this, "payload:", payload);
-    this.historyList.push(payload);
-  }
-
-  public created() {
-    this.$initChannel("room:lobby");
-  }
-}
+});
 </script>

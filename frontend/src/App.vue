@@ -26,13 +26,9 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Component } from "vue-property-decorator";
 import Communicator from "./components/Communicator.vue";
 
-@Component({
-  components: {
-    Communicator
-  }
-})
-export default class App extends Vue {}
+export default Vue.extend({
+  components: { Communicator }
+});
 </script>
