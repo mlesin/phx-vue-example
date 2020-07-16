@@ -48,7 +48,7 @@ export default class Communicator extends Vue {
     }
   }
 
-  @Obey("other", "some_channel:*")
+  @Obey("other", "some_channel:topic")
   public onOther(payload: { sender: string; message: string }) {
     console.log("this:", this, "payload:", payload);
     this.historyList.push({ sender: payload.sender, message: "other:" + payload.message });
