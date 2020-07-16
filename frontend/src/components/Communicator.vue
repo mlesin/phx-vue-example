@@ -27,6 +27,7 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { Obey } from "../plugins/vue-phx";
+import store from "../store";
 
 @Component({})
 export default class Communicator extends Vue {
@@ -38,6 +39,7 @@ export default class Communicator extends Vue {
 
   public add() {
     if (this.message.length > 0) {
+      store.dispatch.module1.loadName({ id: this.message });
       this.$channel.push("shout", {
         message: this.message,
         sender: this.sender
@@ -46,7 +48,7 @@ export default class Communicator extends Vue {
     }
   }
 
-  @Obey("other", "some_channel:topic")
+  @Obey("other", "some_channel:*")
   public onOther(payload: { sender: string; message: string }) {
     console.log("this:", this, "payload:", payload);
     this.historyList.push({ sender: payload.sender, message: "other:" + payload.message });

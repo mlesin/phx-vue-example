@@ -9,10 +9,7 @@ export interface ObeyChannels {
   [channelName: string]: ObeyOption;
 }
 
-export function Obey(
-  eventName: string,
-  channelName?: string
-): (targetPrototype: Vue, memberName: string, propertyDescriptor: PropertyDescriptor) => void {
+export function Obey(eventName: string, channelName?: string) {
   return (targetPrototype: Vue, memberName: string, propertyDescriptor: PropertyDescriptor) => {
     console.log("create decorator:", targetPrototype, propertyDescriptor);
     const decorator = createDecorator((componentOptions, _k) => {
