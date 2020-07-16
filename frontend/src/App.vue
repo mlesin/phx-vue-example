@@ -8,6 +8,9 @@
 
     <v-main>
       <v-container fluid>
+        <v-row justify="center">
+          <v-col cols="2">{{ $store.state.module1.name }}</v-col>
+        </v-row>
         <v-row align="center" justify="center">
           <v-col md="6">
             <communicator sender="Left"></communicator>

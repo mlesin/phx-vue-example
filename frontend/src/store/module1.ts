@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import { defineModule } from "direct-vuex";
 import { moduleActionContext, moduleGetterContext } from "./index";
 
@@ -15,7 +14,7 @@ const module1 = defineModule({
   },
   getters: {
     message(...args): string {
-      const { state } = module1GetterContext(args);
+      const { state } = moduleGetterContext(args, module1);
       return `Hello, ${state.name}!`;
     }
   },
@@ -26,7 +25,7 @@ const module1 = defineModule({
   },
   actions: {
     async loadName(context, payload: { id: string }) {
-      const { commit } = module1ActionContext(context);
+      const { commit } = moduleActionContext(context, module1);
       const name = `Name-${payload.id}`; // load it from somewhere
       commit.SET_NAME(name);
       return { name };
@@ -35,7 +34,3 @@ const module1 = defineModule({
 });
 
 export default module1;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const module1GetterContext = (args: [Module1State, any, any, any]) => moduleGetterContext(args, module1);
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const module1ActionContext = (context: any) => moduleActionContext(context, module1);
