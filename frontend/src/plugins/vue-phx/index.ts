@@ -26,10 +26,11 @@ const VueChannel: PluginObject<VuePhxOptions> = {
     const channelKeeper = new ChannelKeeper(socket);
     Vue.prototype.$channelKeeper = channelKeeper;
     Vue.prototype.$socket = socket;
+
+    // Map events to commits
     Object.keys(options.assignments).forEach(channelName => {
       const channel = channelKeeper.retrieveChannel(channelName);
       Object.keys(options.assignments[channelName]).forEach(eventName => {
-        console.log("registering", channelName, eventName);
         channel.on(eventName, options.assignments[channelName][eventName]);
       });
     });
