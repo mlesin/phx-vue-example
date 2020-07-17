@@ -2,16 +2,18 @@ import { Socket, SocketConnectOption } from "phoenix";
 import _Vue, { PluginObject } from "vue";
 import VuePhxMixin from "./mixin";
 import ChannelKeeper from "./channelKeeper";
-import { AppStore } from "@/store";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type EventCallback = (payload?: any) => void;
+
+export type Assignments = Record<string, Record<string, EventCallback>>;
 
 interface VuePhxOptions {
   url: string;
   params?: Partial<SocketConnectOption>;
-  store?: AppStore;
+  assignments: Assignments;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type EventCallback = (payload?: any) => void;
 type PhxChnEvents = Record<string, EventCallback>;
 export type PhxChannels = Record<string, PhxChnEvents>;
 
@@ -21,11 +23,16 @@ const VueChannel: PluginObject<VuePhxOptions> = {
     const socket = new Socket(options.url, { params: options.params });
     console.log("connecting socket...");
     socket.connect();
-    Vue.prototype.$channelKeeper = new ChannelKeeper(socket);
+    const channelKeeper = new ChannelKeeper(socket);
+    Vue.prototype.$channelKeeper = channelKeeper;
     Vue.prototype.$socket = socket;
-    if (options.store) {
-      console.log(options.store.commit.module1.SET_NAME("HOHOHO!"));
-    }
+    Object.keys(options.assignments).forEach(channelName => {
+      const channel = channelKeeper.retrieveChannel(channelName);
+      Object.keys(options.assignments[channelName]).forEach(eventName => {
+        console.log("registering", channelName, eventName);
+        channel.on(eventName, options.assignments[channelName][eventName]);
+      });
+    });
     Vue.mixin(VuePhxMixin);
   }
 };

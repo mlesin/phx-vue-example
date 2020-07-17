@@ -17,7 +17,7 @@ defmodule EventWeb.RoomChannel do
 
     EventWeb.Endpoint.broadcast_from!(self(), "some_channel:topic", "other", %{
       sender: "server",
-      message: message
+      message: "server handled: " <> message
     })
 
     {:noreply, socket}
