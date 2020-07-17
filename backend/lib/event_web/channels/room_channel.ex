@@ -13,6 +13,7 @@ defmodule EventWeb.RoomChannel do
     IO.inspect(socket)
     IO.inspect(payload)
     broadcast(socket, "shout", payload)
+    broadcast(socket, "газирумгарумге", payload)
 
     EventWeb.Endpoint.broadcast_from!(self(), "some_channel:topic", "other", %{
       sender: "server",

@@ -79,7 +79,8 @@
               "args": "all",
               "argsIgnorePattern": "^_"
             }
-          ]
+          ],
+          "quote-props": ["error", "consistent"]
         }
       }
     ]

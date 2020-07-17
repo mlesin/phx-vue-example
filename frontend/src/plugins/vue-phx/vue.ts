@@ -2,8 +2,9 @@ import Vue from "vue";
 export * from "vue";
 export default Vue;
 
-import { Socket, Channel } from "phoenix";
+import { Socket } from "phoenix";
 import ChannelKeeper from "./channelKeeper";
+import { PhxChannels } from ".";
 declare module "vue/types/vue" {
   interface Vue {
     $socket: Socket;
@@ -20,6 +21,6 @@ declare module "vue/types/options" {
     PropsDef = PropsDefinition<DefaultProps>,
     Props = DefaultProps
   > {
-    channels?: Record<string, Partial<Channel>>;
+    channels?: PhxChannels;
   }
 }

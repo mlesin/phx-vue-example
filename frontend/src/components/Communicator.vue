@@ -25,7 +25,6 @@
 
 <script lang="ts">
 import Vue from "vue";
-// import { Obey } from "../plugins/vue-phx";
 import store from "../store";
 
 export default Vue.extend({
@@ -43,12 +42,11 @@ export default Vue.extend({
   },
   channels: {
     "room:lobby": {
-      onError(err) {
-        console.log("Error", err);
+      газирумгарумге: function(payload: { sender: string; message: string }) {
+        this.historyList.push({ sender: payload.sender, message: "other:" + payload.message });
       },
-      onMessage(event: string, payload: { sender: string; message: string }) {
-        console.log("Got message: ", event, "payload:", payload, "this:", this);
-        //this.historyList.push({ sender: payload.sender, message: "other:" + payload.message });
+      shout: function(payload: { sender: string; message: string }) {
+        this.historyList.push(payload);
       }
     }
   },
@@ -56,19 +54,13 @@ export default Vue.extend({
     add() {
       if (this.message.length > 0) {
         store.dispatch.module1.loadName({ id: this.message });
-        console.log("sesending msg:", this.$options.channels, this.$options.channels?.["room:lobby"]);
-        this.$options.channels?.["room:lobby"].push?.("shout", {
+        console.log("sending msg:", this.message);
+        this.$channelKeeper.retrieveChannel("room:lobby").push("shout", {
           message: this.message,
           sender: this.sender
         });
         this.message = "";
       }
-    },
-    //@Obey("other", "some_channel:topic")
-    // @Obey("shout")
-    onShout(payload: { sender: string; message: string }) {
-      console.log("this:", this, "payload:", payload);
-      this.historyList.push(payload);
     }
   }
 });
