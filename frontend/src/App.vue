@@ -29,6 +29,9 @@ import Vue from "vue";
 import Communicator from "./components/Communicator.vue";
 
 export default Vue.extend({
-  components: { Communicator }
+  components: { Communicator },
+  created() {
+    //;
+  }
 });
 </script>

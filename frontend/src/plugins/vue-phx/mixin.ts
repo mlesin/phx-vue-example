@@ -1,5 +1,4 @@
 import Vue from "vue";
-// import { PhxChannels } from ".";
 
 export default Vue.extend({
   created() {
