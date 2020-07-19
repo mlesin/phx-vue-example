@@ -1,5 +1,6 @@
 import { defineModule } from "direct-vuex";
 import { /*moduleActionContext,*/ moduleGetterContext } from "./index";
+import { Message, Reply } from "@/socketApi";
 
 export interface Module1State {
   name: null | string;
@@ -19,8 +20,16 @@ const module1 = defineModule({
     }
   },
   mutations: {
-    SET_NAME(state, response: { sender: string; message: string }) {
+    SET_NAME(state, response: Message) {
       state.name = response.message;
+    },
+    REPLY(_state, response: Reply) {
+      console.log("in mutation", response);
+      if (response.response === "join") {
+        console.log("joined channel");
+      } else {
+        console.log("getting message:", response.response.message);
+      }
     }
   },
   actions: {
